@@ -1,0 +1,9 @@
+.idea
+venv
+.env
+.pytest_cache
+uploads/images/
+/static/
+/media/
+/tests/.pytest_cache
+*.pyc
