@@ -1,0 +1,35 @@
+version: "3.10"
+
+services:
+  postgres_database:
+    container_name: postgres_database
+    image: postgres
+    ports:
+      - ${DB_PORT}:${DB_PORT}
+    env_file:
+      - .env
+    volumes:
+      - my-datavolume:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+
+  web_app:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    ports:
+      - 8000:8000
+    depends_on:
+      - postgres_database
+    environment:
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
+      - DEBUG=${DEBUG}
+
+volumes:
+  my-datavolume:

@@ -1,12 +1,11 @@
 from django.shortcuts import render, redirect
-from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
+from drf_spectacular.utils import extend_schema_view, extend_schema
 from rest_framework import viewsets, mixins
 from rest_framework.permissions import IsAuthenticated
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework.permissions import AllowAny
 from socialNetwork.api.mixins import LikeModelMixin
-from socialNetwork.api.serializers import PostSerializer, LikeSerializer, UserSerializer
+from socialNetwork.api.serializers import PostSerializer, LikeSerializer, UserSerializer, CustomObtainPairSerializer
 from socialNetwork.filters import LikeFilterSet
 from socialNetwork.forms import UserRegistrationForm
 from socialNetwork.models import Post, Like, User
@@ -24,16 +23,6 @@ def user_register(request):
     return render(request, 'registration.html', {'form': form})
 
 
-class CustomObtainPairSerializer(TokenObtainPairSerializer):
-    @classmethod
-    def get_token(cls, user):
-        token = super(CustomObtainPairSerializer, cls).get_token(user)
-        user.last_login = timezone.now()
-        user.last_time_request = timezone.now()
-        user.save()
-        return token
-
-
 class CustomTokenObtainPairView(TokenObtainPairView):
     permission_classes = (AllowAny,)
     serializer_class = CustomObtainPairSerializer
@@ -47,6 +36,26 @@ class UserViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
         return User.objects.filter(pk=self.request.user.pk)
 
 
+@extend_schema_view(
+    list=extend_schema(
+        description='List posts'
+    ),
+    create=extend_schema(
+        description='Create post'
+    ),
+    retrieve=extend_schema(
+        description='Retrieve post'
+    ),
+    update=extend_schema(
+        description='Put post'
+    ),
+    partial_update=extend_schema(
+        description='Patch post'
+    ),
+    destroy=extend_schema(
+        description='Delete post'
+    )
+)
 class PostViewSet(LikeModelMixin, viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
