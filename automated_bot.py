@@ -1,39 +1,39 @@
 import requests
 from bot.config import Settings
-from bot.utils import *
+from bot import utils
 
 
-get_token = requests.get(set_url('register'))
+get_token = requests.get(utils.set_url('register'))
 registered_users = []
 
 for user in range(Settings.number_of_users):
-    password = string_generator()
+    password = utils.string_generator()
     registration_data = {
         'csrfmiddlewaretoken': get_token.cookies.get('csrftoken'),
-        'username': string_generator(),
+        'username': utils.string_generator(),
         'password1': password,
         'password2': password,
-        'email': generate_random_email(),
+        'email': utils.generate_random_email(),
     }
-    response = register_user(registration_data, get_token.cookies)
+    response = utils.register_user(registration_data, get_token.cookies)
     registered_users.append(registration_data)
 
 for user in registered_users:
     login_data = {"username": user['username'], "password": user['password1']}
-    headers = login(login_data, get_token.cookies)
+    headers = utils.login(login_data, get_token.cookies)
 
     for post in range(Settings.max_posts_per_user):
         post_data = {
-            "title": string_generator(),
-            "body": string_generator(20)
+            "title": utils.string_generator(),
+            "body": utils.string_generator(20)
         }
-        create_post(post_data, headers, get_token.cookies)
+        utils.create_post(post_data, headers, get_token.cookies)
 
 for user in registered_users:
     login_data = {"username": user['username'], "password": user['password1']}
-    headers = login(login_data, get_token.cookies)
-    posts = get_posts(headers, get_token.cookies)
-    rand_posts = random_elements_from_list(posts.json()['results'])
+    headers = utils.login(login_data, get_token.cookies)
+    posts = utils.get_posts(headers, get_token.cookies)
+    rand_posts = utils.random_elements_from_list(posts.json()['results'])
 
     for post in rand_posts:
-        like_post(post["id"], headers, get_token.cookies)
+        utils.like_post(post["id"], headers, get_token.cookies)
