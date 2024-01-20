@@ -53,9 +53,17 @@ export SOME_VARIABLE=some_value
 ### Endpoints:
 * List of all endpoints you can find in Swagger:
 ```
-http://127.0.0.1:8000/docs#/
+http://127.0.0.1:8000/star-navi/api/schema/docs/    # Swagger docs
+http://127.0.0.1:8000/star-navi/register
+http://127.0.0.1:8000/star-navi/api/token/
+http://127.0.0.1:8000/star-navi/api/token/refresh/
+http://127.0.0.1:8000/star-navi/api/post/
+http://127.0.0.1:8000/star-navi/api/post/{post_id}/like/
+http://127.0.0.1:8000/star-navi/api/post/{post_id}/unlike/
+http://127.0.0.1:8000/star-navi/api/analytics/
+http://127.0.0.1:8000/star-navi/api/user/
 ```
-##Bot
+## Bot
 **Configure Data**
 * Set config data in bot/config.py
 
